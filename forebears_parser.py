@@ -37,9 +37,10 @@ def write_to_file(list_names, name_file):
         f.write('\n'.join(list_names))
 
 def get_surname(driver, name_file, url):
-    print(url)
     list_names = []
     page_source = get_page(driver, url)
+    if page_source == 0:
+        return
     
     bs = BeautifulSoup(page_source, 'html.parser')
     params = bs.find_all('a')
@@ -59,7 +60,9 @@ def get_surname(driver, name_file, url):
 def get_forenames(driver, name_file, url):
     list_famele_names, list_male_names = [], []
     page_source = get_page(driver, url)
-
+    if page_source == 0:
+        return
+    
     bs = BeautifulSoup(page_source, 'html.parser')
     params = bs.find_all('tr')
 
