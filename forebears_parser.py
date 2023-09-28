@@ -2,23 +2,16 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 
+DRIVER_PATH = '../chromedriver.exe'
+URL_BEFORE = 'https://forebears.io/'
+URL_AFTER_SURNAME = '/surnames'
+URL_AFTER_FORENAME = '/forenames'
+
 black_list = ['None', 'Names', 'Places', 'Login', 'Forgot password?', 'About', 'Contact', 
               'Copyright',  'Privacy', 'Credits', 'API', 'Do Not Sell My Personal Information',
               'Change Consent', 'Forenames', 'Surnames', 'Genealogical Resources', 'England & Wales Guide']
 
-surname = { 'united-states':'https://forebears.io/united-states/surnames',
-            'england': 'https://forebears.io/england/surnames',
-            'germany': 'https://forebears.io/germany/surnames',
-            'france': 'https://forebears.io/france/surnames',
-            'spain': 'https://forebears.io/spain/surnames',
-            'portugal': 'https://forebears.io/portugal/surnames'}
-
-forenames = {'united-states':'https://forebears.io/united-states/forenames',
-            'england': 'https://forebears.io/england/forenames',
-            'germany': 'https://forebears.io/germany/forenames',
-            'france': 'https://forebears.io/france/forenames',
-            'spain': 'https://forebears.io/spain/forenames',
-            'portugal': 'https://forebears.io/portugal/forenames'}
+countries = [ 'united-states', 'england', 'germany', 'france', 'spain', 'portugal' ]  # If you need, add a new country 
 
 def get_page(driver, url):
     try:
@@ -36,9 +29,9 @@ def write_to_file(list_names, name_file):
     with open('result/' + name_file, 'w') as f:
         f.write('\n'.join(list_names))
 
-def get_surname(driver, name_file, url):
+def get_surname(driver, country):
     list_names = []
-    page_source = get_page(driver, url)
+    page_source = get_page(driver, URL_BEFORE + country + URL_AFTER_SURNAME)
     if page_source == 0:
         return
     
@@ -51,15 +44,15 @@ def get_surname(driver, name_file, url):
             continue
         list_names.append(name)
     
-    name_file = name_file + '_surname.txt'
+    name_file = country + '_surname.txt'
 
     write_to_file(list_names, name_file)
 
     driver.delete_all_cookies()
 
-def get_forenames(driver, name_file, url):
+def get_forenames(driver, country):
     list_famele_names, list_male_names = [], []
-    page_source = get_page(driver, url)
+    page_source = get_page(driver, URL_BEFORE + url + URL_AFTER_FORENAME)
     if page_source == 0:
         return
     
@@ -78,8 +71,8 @@ def get_forenames(driver, name_file, url):
         else:
             list_famele_names.append(name.string)
 
-    file_male_name = name_file + '_forenames_male.txt'
-    file_famele_name = name_file + '_forenames_famele.txt'
+    file_male_name = country + '_forenames_male.txt'
+    file_famele_name = country + '_forenames_famele.txt'
     
     write_to_file(list_male_names, file_male_name)
 
@@ -92,13 +85,11 @@ def main():
     options.add_argument('--headless')
     options.add_argument('--disable-gpu')
 
-    driver = webdriver.Chrome(options=options) # options=options
+    driver = webdriver.Chrome(DRIVER_PATH, options=options) # options=options
     
-    for key, val in surname.items():
-        get_surname(driver, key, val)
-    
-    for key, val in forenames.items():
-        get_forenames(driver, key, val)
+    for country in countries:
+        get_surname(driver, country)
+        get_forenames(driver, country)
     
     driver.quit()
 
