@@ -87,7 +87,7 @@ def get_forenames(driver, name_file, url):
 
     driver.delete_all_cookies()
 
-if __name__ == '__main__':
+def main():
     options = Options()
     options.add_argument('--headless')
     options.add_argument('--disable-gpu')
@@ -101,3 +101,6 @@ if __name__ == '__main__':
         get_forenames(driver, key, val)
     
     driver.quit()
+
+if __name__ == '__main__':
+    main()
