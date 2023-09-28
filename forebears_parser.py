@@ -52,7 +52,7 @@ def get_surname(driver, country):
 
 def get_forenames(driver, country):
     list_famele_names, list_male_names = [], []
-    page_source = get_page(driver, URL_BEFORE + url + URL_AFTER_FORENAME)
+    page_source = get_page(driver, URL_BEFORE + country + URL_AFTER_FORENAME)
     if page_source == 0:
         return
     
